@@ -1,0 +1,13 @@
+# Project exclude paths
+/.gradle/
+/build/
+/out/
+/out/production/classes/
+/out/test/classes/
+/test.class
+/test.txt
+/test2.class
+/test2.txt
+/test3.class
+/test4.class
+/.idea/
