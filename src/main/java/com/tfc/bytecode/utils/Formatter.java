@@ -6,9 +6,9 @@ public class Formatter {
 		boolean inString = false;
 		boolean escaped = false;
 		int brackets = 0;
-		src = src.replace("\n","");
-		src = src.replace("\r","");
-		src = src.replace("\t","");
+		src = src.replace("\n", "");
+		src = src.replace("\r", "");
+		src = src.replace("\t", "");
 		for (int i = 0; i < src.length(); i++) {
 			if (inString) {
 				builder.append(src.charAt(i));

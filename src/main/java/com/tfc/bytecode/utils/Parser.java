@@ -10,8 +10,8 @@ import java.util.Arrays;
 
 public class Parser {
 	public static ClassNode parse(String formattedSource) {
-		formattedSource = formattedSource.replace("\r\t\t","");
-		formattedSource = formattedSource.replace("\r\t","");
+		formattedSource = formattedSource.replace("\r\t\t", "");
+		formattedSource = formattedSource.replace("\r\t", "");
 		boolean inBody = false;
 		boolean inConstructor = false;
 		ArrayList<FieldNodeSource> fields = new ArrayList<>();
@@ -30,7 +30,7 @@ public class Parser {
 					packageName = line.replace("package ", "").replace(";", "") + ".";
 				}
 				if (line.contains("class")) {
-					line = line.replace(", ",",");
+					line = line.replace(", ", ",");
 					String[] text = line.split(" ");
 					if (text[0].equals("public")) {
 						access = Access.parseAccess("public");
@@ -44,8 +44,7 @@ public class Parser {
 						else if (isExtend) {
 							superName = textS;
 							isExtend = false;
-						}
-						else if (textS.equals("implements")) isInterf = true;
+						} else if (textS.equals("implements")) isInterf = true;
 						else if (isInterf) {
 							interfaces.addAll(Arrays.asList(textS.split(",")));
 							isInterf = false;

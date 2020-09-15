@@ -1,7 +1,6 @@
 package com.tfc.bytecode.utils.class_structure;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnNode;
 
 import java.util.ArrayList;
 

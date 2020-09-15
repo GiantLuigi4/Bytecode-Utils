@@ -1,9 +1,9 @@
 import com.tfc.bytecode.Compiler;
-import com.tfc.bytecode.utils.class_structure.FieldNode;
-import com.tfc.bytecode.utils.class_structure.MethodNodeSource;
-import com.tfc.bytecode.loading.ForceLoad;
 import com.tfc.bytecode.Compilers.ASM_Compiler;
+import com.tfc.bytecode.loading.ForceLoad;
+import com.tfc.bytecode.utils.class_structure.FieldNode;
 import com.tfc.bytecode.utils.class_structure.MethodNode;
+import com.tfc.bytecode.utils.class_structure.MethodNodeSource;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
 import javassist.compiler.CompileError;
@@ -35,11 +35,11 @@ public class Test {
 		
 		ArrayList<MethodNodeSource> nodesMS = new ArrayList<>();
 		nodesMS.addAll(Arrays.asList(new MethodNodeSource(
-				  "public static void hello() {" +
+				"public static void hello() {" +
 						"	System.out.println(hello);" +
 						"	System.out.println(hello1);" +
 						"}"
-		),new MethodNodeSource(
+		), new MethodNodeSource(
 				"public static void hello1() {" +
 						"	hello();" +
 						"	System.out.println(\"hello1 has been called\");" +
@@ -54,7 +54,7 @@ public class Test {
 		assert bytes1 != null;
 		writer4.write(bytes1);
 		writer5.write(bytes2);
-
+		
 		writer.close();
 		writer1.close();
 		writer2.close();
@@ -62,7 +62,7 @@ public class Test {
 		writer4.close();
 		writer5.close();
 		
-		ForceLoad.forceLoad(Test.class.getClassLoader(),bytes);
+		ForceLoad.forceLoad(Test.class.getClassLoader(), bytes);
 		Class.forName("hello").getMethod("hello1").invoke(null);
 	}
 }
