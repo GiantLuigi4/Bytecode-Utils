@@ -35,6 +35,7 @@ public class Formatter {
 			}
 			lineCommentRemover.append('\n');
 		}
+		src = lineCommentRemover.toString();
 		StringBuilder builder = new StringBuilder();
 		boolean inString = false;
 		boolean escaped = false;

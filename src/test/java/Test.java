@@ -5,9 +5,6 @@ import com.tfc.bytecode.utils.class_structure.FieldNode;
 import com.tfc.bytecode.utils.class_structure.InsnNode;
 import com.tfc.bytecode.utils.class_structure.MethodNode;
 import com.tfc.bytecode.utils.class_structure.MethodNodeSource;
-import javassist.CannotCompileException;
-import javassist.NotFoundException;
-import javassist.compiler.CompileError;
 import org.objectweb.asm.Opcodes;
 
 import java.io.FileOutputStream;
@@ -18,7 +15,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Test {
-	public static void main(String[] args) throws IOException, CannotCompileException, CompileError, NotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+	public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 		FileOutputStream writer = new FileOutputStream(System.getProperty("user.dir") + "\\test.class");
 		FileOutputStream writer1 = new FileOutputStream(System.getProperty("user.dir") + "\\test.txt");
 		FileOutputStream writer2 = new FileOutputStream(System.getProperty("user.dir") + "\\test2.class");
@@ -59,8 +56,7 @@ public class Test {
 			err.printStackTrace();
 		}
 		
-		ArrayList<MethodNodeSource> nodesMS = new ArrayList<>();
-		nodesMS.addAll(Arrays.asList(new MethodNodeSource(
+		ArrayList<MethodNodeSource> nodesMS = new ArrayList<>(Arrays.asList(new MethodNodeSource(
 				"public static void hello() {" +
 						"	System.out.println(hello);" +
 						"	System.out.println(hello1);" +

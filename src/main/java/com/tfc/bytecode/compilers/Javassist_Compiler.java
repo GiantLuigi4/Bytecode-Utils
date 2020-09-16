@@ -16,7 +16,7 @@ public class Javassist_Compiler {
 	public Javassist_Compiler() {
 		this.addClassPath(new ClassPath() {
 			@Override
-			public InputStream openClassfile(String classname) throws NotFoundException {
+			public InputStream openClassfile(String classname) {
 				return Javassist_Compiler.class.getClassLoader().getResourceAsStream(classname.replace(".", "/") + ".class");
 			}
 			

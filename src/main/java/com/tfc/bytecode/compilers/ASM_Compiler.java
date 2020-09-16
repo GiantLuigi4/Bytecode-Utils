@@ -21,7 +21,7 @@ public class ASM_Compiler {
 		writer.visit(Opcodes.V1_8, access, name, null, superName, interfaces);
 		writer.visitSource(name.replace(".", "/") + ".java", null);
 		for (FieldNode node : nodesF) {
-			String desc = "";
+			String desc;
 			if (node.desc.equals("int")) desc = "I";
 			else desc = node.desc;
 			writer.visitField(node.access, node.name, desc, null, node.value);
