@@ -18,11 +18,28 @@ public class ForceLoad {
 		}
 	}
 	
+	/**
+	 * Forces a class loader to load a class
+	 *
+	 * @param loader the class loader to force to load the class
+	 * @param bytes  the bytes of the class that you want to load
+	 * @return the class
+	 * @throws InvocationTargetException if reflection fails
+	 * @throws IllegalAccessException    if reflection fails
+	 */
 	public static Class<?> forceLoad(ClassLoader loader, byte[] bytes) throws InvocationTargetException, IllegalAccessException {
 		m.setAccessible(true);
 		return (Class<?>) m.invoke(loader, bytes, 0, bytes.length);
 	}
 	
+	/**
+	 * I don't think this works
+	 *
+	 * @param bytes the bytes of the class to load
+	 * @return the class
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
 	@CallerSensitive
 	public static Class<?> forceLoad(byte[] bytes) throws InvocationTargetException, IllegalAccessException {
 		Class<?> caller = Reflection.getCallerClass();

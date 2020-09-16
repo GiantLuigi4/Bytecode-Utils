@@ -1,5 +1,5 @@
 import com.tfc.bytecode.Compiler;
-import com.tfc.bytecode.Compilers.ASM_Compiler;
+import com.tfc.bytecode.compilers.ASM_Compiler;
 import com.tfc.bytecode.loading.ForceLoad;
 import com.tfc.bytecode.utils.class_structure.FieldNode;
 import com.tfc.bytecode.utils.class_structure.MethodNode;

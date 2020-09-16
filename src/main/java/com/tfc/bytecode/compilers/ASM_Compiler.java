@@ -1,4 +1,4 @@
-package com.tfc.bytecode.Compilers;
+package com.tfc.bytecode.compilers;
 
 import com.tfc.bytecode.utils.asm.NodeBasedMethodVisitor;
 import com.tfc.bytecode.utils.class_structure.FieldNode;

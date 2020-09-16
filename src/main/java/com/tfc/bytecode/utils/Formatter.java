@@ -1,6 +1,12 @@
 package com.tfc.bytecode.utils;
 
 public class Formatter {
+	/**
+	 * Formats a java file into something usable by the Parser
+	 *
+	 * @param src The raw source code
+	 * @return A formatted version of the code
+	 */
 	public static String formatForCompile(String src) {
 		StringBuilder lineCommentRemover = new StringBuilder();
 		for (String s : src.split("\n")) {

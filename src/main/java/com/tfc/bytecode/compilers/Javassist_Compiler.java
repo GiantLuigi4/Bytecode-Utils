@@ -1,4 +1,4 @@
-package com.tfc.bytecode.Compilers;
+package com.tfc.bytecode.compilers;
 
 import com.tfc.bytecode.utils.Formatter;
 import com.tfc.bytecode.utils.Parser;

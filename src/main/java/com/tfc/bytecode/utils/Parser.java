@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Parser {
+	/**
+	 * Parses a source file into a node like object, which all compilers will be able to use
+	 *
+	 * @param formattedSource {@link com.tfc.bytecode.utils.Formatter}
+	 * @return An object containing the whole class's source code, in a org.ow2.asm node-like format that all compilers will be able to compile from (this might be a bit ambitious, but I'm still gonna try to do this)
+	 */
 	public static ClassNode parse(String formattedSource) {
 		formattedSource = formattedSource.replace("\r\t\t", "");
 		formattedSource = formattedSource.replace("\r\t", "");
