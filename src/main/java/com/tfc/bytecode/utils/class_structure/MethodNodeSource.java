@@ -30,7 +30,6 @@ public class MethodNodeSource {
 		for (String modif : Access.modifs)
 			type = type.replace(modif, "");
 		type = (type.trim());
-		System.out.println(code);
 		return type.substring(0, type.indexOf(" "));
 	}
 	

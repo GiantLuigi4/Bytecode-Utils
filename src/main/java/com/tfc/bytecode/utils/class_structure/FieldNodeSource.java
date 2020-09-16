@@ -15,7 +15,6 @@ public class FieldNodeSource {
 		thisCode += node.name;
 		thisCode += " = ";
 		thisCode += node.value + ";";
-		System.out.println(thisCode);
 		code = thisCode;
 	}
 	
@@ -24,7 +23,6 @@ public class FieldNodeSource {
 		for (String modif : Access.modifs)
 			type = type.replace(modif, "");
 		type = (type.trim());
-		System.out.println(code);
 		return type.substring(0, type.indexOf(" "));
 	}
 	

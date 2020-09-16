@@ -46,16 +46,13 @@ public class MethodNode {
 	private String createDesc(String desc, String args) {
 		args = args.substring(args.indexOf("(") + 1);
 		args = args.substring(0, args.indexOf("{"));
-		System.out.println(args);
 		StringBuilder argsBuilder = new StringBuilder("(");
 		for (String s : args.split(",")) {
 			s = s.trim();
-			System.out.println(s);
 			s = (s.substring(0, s.indexOf(" ")));
 			argsBuilder.append(Descriptor.getDescriptorFor(s, true));
 		}
 		argsBuilder.append(")");
-		System.out.println(argsBuilder.toString() + desc);
 		return argsBuilder.toString() + desc;
 	}
 	

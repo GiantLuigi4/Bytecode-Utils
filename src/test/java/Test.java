@@ -55,7 +55,8 @@ public class Test {
 		try {
 			ForceLoad.forceLoad(ASM_Compiler.class.getClassLoader(), bytesASM);
 			Class.forName("hello32").getMethod("test", int.class, int.class).invoke(Class.forName("hello32").newInstance(), 0, 4);
-		} catch (Throwable ignored) {
+		} catch (Throwable err) {
+			err.printStackTrace();
 		}
 		
 		ArrayList<MethodNodeSource> nodesMS = new ArrayList<>();
