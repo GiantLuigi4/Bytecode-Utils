@@ -2,6 +2,7 @@ import com.tfc.bytecode.Compiler;
 import com.tfc.bytecode.compilers.ASM_Compiler;
 import com.tfc.bytecode.loading.ForceLoad;
 import com.tfc.bytecode.utils.class_structure.FieldNode;
+import com.tfc.bytecode.utils.class_structure.InsnNode;
 import com.tfc.bytecode.utils.class_structure.MethodNode;
 import com.tfc.bytecode.utils.class_structure.MethodNodeSource;
 import javassist.CannotCompileException;
@@ -29,9 +30,27 @@ public class Test {
 		ArrayList<MethodNode> nodesM = new ArrayList<>();
 		nodesF.add(new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "hello", "int", null, 32));
 		nodesF.add(new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "hello1", "int", null, 32));
-//		nodesM.add(new MethodNode(Opcodes.ACC_PUBLIC,"hello","","none", new String[0]));
-		writer.write(new ASM_Compiler().generate("hello", Opcodes.ACC_PUBLIC, "", new String[0], nodesF, nodesM));
-		writer1.write(new ASM_Compiler().generate("hello", Opcodes.ACC_PUBLIC, "", new String[0], nodesF, nodesM));
+		MethodNode node = new MethodNode(new MethodNodeSource(
+				"public int test(int var1, int var2) {" +
+						"	return var1+var2;" +
+						"}"
+		));
+		node.desc = "(II)I";
+		node.maxStack = 2;
+		node.maxLocals = 3;
+		
+		MethodNode con = new MethodNode(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
+		con.addInstruction(new InsnNode(InsnNode.InsnType.VAR_INSN, new Object[]{Opcodes.ALOAD, 0}));
+		con.addInstruction(new InsnNode(InsnNode.InsnType.METHOD_INSN, new Object[]{Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false}));
+		con.addInstruction(new InsnNode(InsnNode.InsnType.INSN, new Object[]{Opcodes.RETURN}));
+		
+		nodesM.add(node);
+		nodesM.add(con);
+		byte[] bytesASM = new ASM_Compiler().compile("hello32", Opcodes.ACC_PUBLIC, "", new String[0], nodesF, nodesM);
+		writer.write(bytesASM);
+		writer1.write(bytesASM);
+		ForceLoad.forceLoad(ASM_Compiler.class.getClassLoader(), bytesASM);
+		Class.forName("hello32").getMethod("test", int.class, int.class).invoke(Class.forName("hello32").newInstance(), 0, 4);
 		
 		ArrayList<MethodNodeSource> nodesMS = new ArrayList<>();
 		nodesMS.addAll(Arrays.asList(new MethodNodeSource(

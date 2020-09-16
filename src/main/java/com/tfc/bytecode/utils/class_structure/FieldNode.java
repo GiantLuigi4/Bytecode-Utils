@@ -1,5 +1,7 @@
 package com.tfc.bytecode.utils.class_structure;
 
+import com.tfc.bytecode.utils.Access;
+
 public class FieldNode {
 	public FieldNode(int access, String name, String desc, String signature, Object value) {
 		this.access = access;
@@ -7,6 +9,15 @@ public class FieldNode {
 		this.desc = desc;
 		this.signature = signature;
 		this.value = value;
+	}
+	
+	public FieldNode(FieldNodeSource source) {
+		this.access = Access.parseAccess(source.code.substring(0, source.code.indexOf(" " + source.getType())));
+		this.name = source.getName();
+		this.desc = source.getType().replace(".", "/");
+		this.signature = null;
+		//Can't really parse the value out of a source code tbh
+		this.value = null;
 	}
 	
 	public final int access;
