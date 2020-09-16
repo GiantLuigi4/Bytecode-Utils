@@ -52,8 +52,11 @@ public class Test {
 		byte[] bytesASM = new ASM_Compiler().compile("hello32", Opcodes.ACC_PUBLIC, "", new String[0], nodesF, nodesM);
 		writer.write(bytesASM);
 		writer1.write(bytesASM);
-		ForceLoad.forceLoad(ASM_Compiler.class.getClassLoader(), bytesASM);
-		Class.forName("hello32").getMethod("test", int.class, int.class).invoke(Class.forName("hello32").newInstance(), 0, 4);
+		try {
+			ForceLoad.forceLoad(ASM_Compiler.class.getClassLoader(), bytesASM);
+			Class.forName("hello32").getMethod("test", int.class, int.class).invoke(Class.forName("hello32").newInstance(), 0, 4);
+		} catch (Throwable ignored) {
+		}
 		
 		ArrayList<MethodNodeSource> nodesMS = new ArrayList<>();
 		nodesMS.addAll(Arrays.asList(new MethodNodeSource(
