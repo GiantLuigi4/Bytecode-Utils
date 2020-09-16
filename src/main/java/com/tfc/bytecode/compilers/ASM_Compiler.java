@@ -17,7 +17,7 @@ public class ASM_Compiler {
 	public byte[] generate(String name, int access, String superName, String[] interfaces, ArrayList<FieldNode> nodesF, ArrayList<MethodNode> nodesM) {
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		if (superName.equals("")) superName = "java/lang/Object";
-		writer.visit(Opcodes.ASM_8, access, name, null, superName, interfaces);
+		writer.visit(Opcodes.ASM8, access, name, null, superName, interfaces);
 		writer.visitSource(name.replace(".", "/") + ".java", null);
 		for (FieldNode node : nodesF)
 			writer.visitField(node.access, node.name, node.desc, node.signature, node.value);
