@@ -1,19 +1,20 @@
 package com.tfc.bytecode.Compilers;
 
+import com.tfc.bytecode.utils.Formatter;
 import com.tfc.bytecode.utils.Parser;
 import com.tfc.bytecode.utils.class_structure.*;
-import com.tfc.bytecode.utils.Formatter;
 import javassist.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class Javassist_Compiler {
+	private final ClassPool pool = ClassPool.getDefault();
+	
 	public Javassist_Compiler() {
 	}
 	
 	public byte[] compile(String name, String superName, ArrayList<FieldNode> fields, ArrayList<MethodNodeSource> methods) throws CannotCompileException, IOException, NotFoundException {
-		ClassPool pool = ClassPool.getDefault();
 		CtClass cc = pool.makeClass(name);
 		if (superName.equals("")) superName = "java.lang.Object";
 		cc.setSuperclass(pool.getCtClass(superName));
@@ -28,7 +29,6 @@ public class Javassist_Compiler {
 	public byte[] compile(Object name, String superName, ArrayList<FieldNodeSource> fields, ArrayList<MethodNodeSource> methods) throws CannotCompileException, IOException, NotFoundException {
 		if (!(name instanceof String))
 			throw new RuntimeException(new IllegalArgumentException("Name should be an instance of a string."));
-		ClassPool pool = ClassPool.getDefault();
 		CtClass cc = pool.makeClass((String) name);
 		if (superName.equals("")) superName = "java.lang.Object";
 		cc.setSuperclass(pool.getCtClass(superName));
@@ -40,7 +40,6 @@ public class Javassist_Compiler {
 	}
 	
 	public byte[] compile(ClassNode classNode) throws CannotCompileException, IOException, NotFoundException {
-		ClassPool pool = ClassPool.getDefault();
 		CtClass cc;
 		if (classNode.isInterface) cc = pool.makeInterface(classNode.name);
 		else cc = pool.makeClass(classNode.name);
@@ -74,5 +73,13 @@ public class Javassist_Compiler {
 		src = Formatter.formatForCompile(src);
 		ClassNode node = Parser.parse(src);
 		return compile(node);
+	}
+	
+	public void addClassPath(String path) throws NotFoundException {
+		pool.appendClassPath(path);
+	}
+	
+	public void addClassPath(ClassPath path) {
+		pool.appendClassPath(path);
 	}
 }
