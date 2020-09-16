@@ -31,13 +31,15 @@ public class Test {
 		nodesF.add(new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "hello", "int", null, 32));
 		nodesF.add(new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "hello1", "int", null, 32));
 		MethodNode node = new MethodNode(new MethodNodeSource(
-				"public int test(int var1, int var2) {" +
-						"	return var1+var2;" +
+				"public int test(int var1, long var2) {" +
+						"	return var1 + var2;" +
 						"}"
 		));
-		node.desc = "(II)I";
-		node.maxStack = 2;
-		node.maxLocals = 3;
+		MethodNode node1 = new MethodNode(new MethodNodeSource(
+				"public long test(int var1, int var2) {" +
+						"	return var1 + var2;" +
+						"}"
+		));
 		
 		MethodNode con = new MethodNode(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
 		con.addInstruction(new InsnNode(InsnNode.InsnType.VAR_INSN, new Object[]{Opcodes.ALOAD, 0}));
@@ -45,6 +47,7 @@ public class Test {
 		con.addInstruction(new InsnNode(InsnNode.InsnType.INSN, new Object[]{Opcodes.RETURN}));
 		
 		nodesM.add(node);
+		nodesM.add(node1);
 		nodesM.add(con);
 		byte[] bytesASM = new ASM_Compiler().compile("hello32", Opcodes.ACC_PUBLIC, "", new String[0], nodesF, nodesM);
 		writer.write(bytesASM);
