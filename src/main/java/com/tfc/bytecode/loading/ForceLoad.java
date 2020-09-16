@@ -18,15 +18,15 @@ public class ForceLoad {
 		}
 	}
 	
-	public static void forceLoad(ClassLoader loader, byte[] bytes) throws InvocationTargetException, IllegalAccessException {
+	public static Class<?> forceLoad(ClassLoader loader, byte[] bytes) throws InvocationTargetException, IllegalAccessException {
 		m.setAccessible(true);
-		m.invoke(loader, bytes, 0, bytes.length);
+		return (Class<?>) m.invoke(loader, bytes, 0, bytes.length);
 	}
 	
 	@CallerSensitive
-	public static void forceLoad(byte[] bytes) throws InvocationTargetException, IllegalAccessException {
+	public static Class<?> forceLoad(byte[] bytes) throws InvocationTargetException, IllegalAccessException {
 		Class<?> caller = Reflection.getCallerClass();
 		m.setAccessible(true);
-		m.invoke(caller.getClassLoader(), bytes, 0, bytes.length);
+		return (Class<?>) m.invoke(caller.getClassLoader(), bytes, 0, bytes.length);
 	}
 }

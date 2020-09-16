@@ -6,12 +6,25 @@ import com.tfc.bytecode.utils.class_structure.*;
 import javassist.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class Javassist_Compiler {
 	private final ClassPool pool = ClassPool.getDefault();
 	
 	public Javassist_Compiler() {
+		this.addClassPath(new ClassPath() {
+			@Override
+			public InputStream openClassfile(String classname) throws NotFoundException {
+				return Javassist_Compiler.class.getClassLoader().getResourceAsStream(classname.replace(".", "/") + ".class");
+			}
+			
+			@Override
+			public URL find(String classname) {
+				return Javassist_Compiler.class.getClassLoader().getResource(classname.replace(".", "/") + ".class");
+			}
+		});
 	}
 	
 	public byte[] compile(String name, String superName, ArrayList<FieldNode> fields, ArrayList<MethodNodeSource> methods) throws CannotCompileException, IOException, NotFoundException {

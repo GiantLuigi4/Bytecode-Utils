@@ -2,6 +2,33 @@ package com.tfc.bytecode.utils;
 
 public class Formatter {
 	public static String formatForCompile(String src) {
+		StringBuilder lineCommentRemover = new StringBuilder();
+		for (String s : src.split("\n")) {
+			boolean inString = false;
+			boolean escaped = false;
+			boolean slash = false;
+			for (char c : s.toCharArray()) {
+				if (escaped) {
+					escaped = false;
+				} else if (c == '"') {
+					inString = !inString;
+				} else if (c == '\\') {
+					escaped = true;
+				} else {
+					if (c == '/') {
+						if (slash) break;
+						slash = true;
+					} else {
+						if (slash) {
+							lineCommentRemover.append('/');
+							slash = false;
+						}
+						lineCommentRemover.append(c);
+					}
+				}
+			}
+			lineCommentRemover.append('\n');
+		}
 		StringBuilder builder = new StringBuilder();
 		boolean inString = false;
 		boolean escaped = false;
