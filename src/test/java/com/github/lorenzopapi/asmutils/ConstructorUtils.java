@@ -1,3 +1,5 @@
+package com.github.lorenzopapi.asmutils;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
@@ -14,7 +16,6 @@ public class ConstructorUtils {
 
 	static ClassReader reader = null;
 	static ClassNode node = null;
-	static ClassWriter result = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
 	public static void main(String[] args) throws IOException {
 		reader = new ClassReader("EmptyClass");
@@ -36,28 +37,31 @@ public class ConstructorUtils {
 		addInstructionsToStartOrEnd(insns, "", true);
 		addInstructionsToStartOrEnd(insns1, "", false);
 		InsnNode beforeNode = new InsnNode(RETURN); //new MethodInsnNode(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
-		addInstructionsAfterOrBeforeInsn(insns2, beforeNode, 1, 0, true);
-		node.accept(result);
+		byte[] bytes = addInstructionsAfterOrBeforeInsn(insns2, beforeNode, 1, 0, true);
 		FileOutputStream stream = new FileOutputStream("yes.class");
-		stream.write(result.toByteArray());
+		stream.write(bytes);
 		stream.close();
 	}
 
-	public static void changeAccess(int newAccess) {
+	public static byte[] changeAccess(int newAccess) {
 		for (MethodNode method : node.methods)
 			if ((method.name.equals("<clinit>") || method.name.equals("<init>")) && method.desc.contains(")V"))
 				method.access = newAccess;
+
+		ClassWriter result = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+		node.accept(result);
+		return result.toByteArray();
 	}
 
-	public static void addInstructionsToStartOrEnd(InsnList list, String descriptor, boolean atStart) {
+	public static byte[] addInstructionsToStartOrEnd(InsnList list, String descriptor, boolean atStart) {
 		if (descriptor.equals("")) {
 			descriptor = "()V";
 		}
 		for (MethodNode method : node.methods)
 			if ((method.name.equals("<clinit>") || method.name.equals("<init>")) && method.desc.contains(descriptor)) {
+				List<Integer> opcodesList = new ArrayList<>();
+				method.instructions.forEach((absNode) -> opcodesList.add(absNode.getOpcode()));
 				for (AbstractInsnNode node : method.instructions) {
-					List<Integer> opcodesList = new ArrayList<>();
-					method.instructions.forEach((absNode) -> opcodesList.add(absNode.getOpcode()));
 					if (atStart) {
 						if (opcodesList.contains(INVOKESPECIAL)) {
 							if (node.getOpcode() == INVOKESPECIAL) {
@@ -71,9 +75,12 @@ public class ConstructorUtils {
 					}
 				}
 			}
+		ClassWriter result = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+		node.accept(result);
+		return result.toByteArray();
 	}
 
-	public static void addInstructionsAfterOrBeforeInsn(InsnList listToAdd, AbstractInsnNode insn, int position, int varInsnValue, boolean before) { //I don't know if it works
+	public static byte[] addInstructionsAfterOrBeforeInsn(InsnList listToAdd, AbstractInsnNode insn, int position, int varInsnValue, boolean before) { //I don't know if it works
 		int insnCounter = 0;
 
 		for (MethodNode method : node.methods)
@@ -95,7 +102,9 @@ public class ConstructorUtils {
 							}
 						}
 					}
-
+		ClassWriter result = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+		node.accept(result);
+		return result.toByteArray();
 	}
 
 }

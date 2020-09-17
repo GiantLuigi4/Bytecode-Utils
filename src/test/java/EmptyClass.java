@@ -1,4 +1,5 @@
 public class EmptyClass {
-	public void hello() {
+	public int hello() {
+		return 2;
 	}
 }
