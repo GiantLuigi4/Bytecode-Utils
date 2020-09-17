@@ -4,24 +4,20 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import static org.objectweb.asm.Opcodes.*;
 
-//I just need to be able to add instructions in the middle of the method
-//but I gtg now
-//I love this convos w/comments lmao
-//everything done I am so good lmao
 public class MethodUtils {
 
-	static ClassReader reader = null;
-	static ClassNode node = null;
+	ClassReader reader;
+	ClassNode node;
 
-	public static void main(String[] args) throws IOException {
-		reader = new ClassReader("EmptyClass");
+	public MethodUtils(byte[] array) {
+		reader = new ClassReader(array);
 		node = new ClassNode();
 		reader.accept(node, 0);
+	}
+
+	/*public void main(String[] args) throws IOException {
 		InsnList insns = new InsnList();
 		insns.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
 		insns.add(new LdcInsnNode("EEEEEEEEEEEEEEEEEEEEEEEEEEE"));
@@ -46,9 +42,17 @@ public class MethodUtils {
 		FileOutputStream stream = new FileOutputStream("yes.class");
 		stream.write(bytes);
 		stream.close();
-	}
-	
-	public static byte[] changeMethodAccess(int newAccess, String methodName, String descriptor) {
+	}*/
+
+	/**
+	 * Changes a method access
+	 * @param newAccess new access of the method
+	 * @param methodName name of the method
+	 * @param descriptor descriptor of the method
+	 * @return a byte array, the new transformed class (useful to write the class into a file)
+	 */
+
+	public byte[] changeMethodAccess(int newAccess, String methodName, String descriptor) {
 		for (MethodNode method : node.methods)
 			if (method.name.equals(methodName) && method.desc.equals(descriptor))
 				method.access = newAccess;
@@ -58,7 +62,16 @@ public class MethodUtils {
 		return result.toByteArray();
 	}
 
-	public static byte[] addInstructionsToStartOrEnd(String name, String descriptor, InsnList list, boolean atStart) {
+	/**
+	 * Adds the specified InsnList at the start or at the end of the method
+	 * @param name name of the method
+	 * @param descriptor descriptor of the method
+	 * @param list InsnList to add
+	 * @param atStart insert list at the start?
+	 * @return a byte array, the new transformed class (useful to write the class into a file)
+	 */
+
+	public byte[] addInstructionsToStartOrEnd(String name, String descriptor, InsnList list, boolean atStart) {
 		if (descriptor.equals("")) {
 			descriptor = "()V";
 		}
@@ -79,7 +92,18 @@ public class MethodUtils {
 		return result.toByteArray();
 	}
 
-	public static byte[] addMethodToClass(int access, String name, String descriptor, String signature, String[] ex, InsnList instructions) {
+	/**
+	 * Adds a method to the class
+	 * @param access access of the method
+	 * @param name name of the method
+	 * @param descriptor descriptor of the method
+	 * @param signature signature of the method, can be {@literal null}
+	 * @param ex exceptions (if any) of the method, can be {@literal null}
+	 * @param instructions InsnList of the method's instructions
+	 * @return a byte array, the new transformed class (useful to write the class into a file)
+	 */
+
+	public byte[] addMethodToClass(int access, String name, String descriptor, String signature, String[] ex, InsnList instructions) {
 		MethodNode method = new MethodNode(access, name, descriptor, signature, ex);
 		method.instructions = instructions;
 		node.methods.add(method);
@@ -88,7 +112,19 @@ public class MethodUtils {
 		return result.toByteArray();
 	}
 
-	public static byte[] addInstructionsAfterOrBeforeInsn(String name, String desc, InsnList listToAdd, int opCodeToSearch, int position, int varInsnValue, boolean before) {
+	/**
+	 * Adds an InsnList before or after a specified OpCode at a certain position
+	 * @param name name of the method
+	 * @param desc descriptor of the method
+	 * @param listToAdd InsnList to add
+	 * @param opCodeToSearch the OpCode you are searching for
+	 * @param position the nth position of the OpCode (e.g. if there are 3 ICONST_2 and you want to insert instructions after or before the first, pass 1 as position)
+	 * @param varInsnValue used for Instructions like ALOAD, ASTORE which require a value. Just pass 0 if you aren't searching for a Var OpCode
+	 * @param before insert list before the OpCode's instruction?
+	 * @return a byte array, the new transformed class (useful to write the class into a file)
+	 */
+
+	public byte[] addInstructionsAfterOrBeforeInsn(String name, String desc, InsnList listToAdd, int opCodeToSearch, int position, int varInsnValue, boolean before) {
 		int insnCounter = 0;
 
 		for (MethodNode method : node.methods)
@@ -115,7 +151,8 @@ public class MethodUtils {
 		return result.toByteArray();
 	}
 
-	public static int parseReturnTypeFromDesc(String desc) {
+	//no javadoc cuz it's private :D
+	private int parseReturnTypeFromDesc(String desc) {
 		String returnString = desc.split("\\)")[1];
 		switch (returnString) {
 			case "V":

@@ -2,31 +2,36 @@ package com.github.lorenzopapi.asmutils;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.*;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import static org.objectweb.asm.Opcodes.*;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InnerClassNode;
 
 public class InnerClassesUtils {
 
-	static ClassReader reader = null;
-	static ClassNode node = null;
+	ClassReader reader;
+	ClassNode node;
 
-	public static void main(String[] args) throws IOException {
-		reader = new ClassReader("EmptyClass");
+	public InnerClassesUtils(byte[] array) {
+		reader = new ClassReader(array);
 		node = new ClassNode();
 		reader.accept(node, 0);
+	}
+
+	/*public void main(String[] args) throws IOException {
 		addInnerClass("EmptyClass$NewInner", ACC_PRIVATE);
 		byte[] bytes = changeInnerClassAccess(ACC_PUBLIC, "InnerClass");
-
 		FileOutputStream stream = new FileOutputStream("yes.class");
 		stream.write(bytes);
 		stream.close();
-	}
+	}*/
 
-	public static byte[] changeInnerClassAccess(int newAccess, String className) {
+	/**
+	 * Changes an inner class's access
+	 * @param newAccess new access of the inner class
+	 * @param className name of the inner class
+	 * @return a byte array, the new transformed class (useful to write the class into a file)
+	 */
+
+	public byte[] changeInnerClassAccess(int newAccess, String className) {
 		for (InnerClassNode innerClass : node.innerClasses) {
 			if (innerClass.innerName.equals(className))
 				innerClass.access = newAccess;
@@ -36,7 +41,14 @@ public class InnerClassesUtils {
 		return result.toByteArray();
 	}
 
-	public static byte[] addInnerClass(String fullName, int access) {
+	/**
+	 * Adds an inner class
+	 * @param fullName fullname of the class, e.g. MyClass$MyInnerClass
+	 * @param access access of the new class
+	 * @return a byte array, the new transformed class (useful to write the class into a file)
+	 */
+
+	public byte[] addInnerClass(String fullName, int access) {
 		String outerClassName = fullName.split("\\$")[0];
 		String simpleInnerClassName = fullName.split("\\$")[1];
 		InnerClassNode newClass = new InnerClassNode(fullName, outerClassName, simpleInnerClassName, access);
