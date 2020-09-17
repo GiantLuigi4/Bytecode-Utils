@@ -36,7 +36,7 @@ public class MethodUtils {
 		stream.write(bytes);
 		stream.close();
 	}
-
+	
 	public static byte[] changeMethodAccess(int newAccess, String methodName, String descriptor) {
 		for (MethodNode method : node.methods)
 			if (method.name.equals(methodName) && method.desc.equals(descriptor))

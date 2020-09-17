@@ -59,33 +59,32 @@ public class Parser {
 					inClass = true;
 				}
 			} else {
-				if (!line.equals("")) {
-					if (line.charAt(0) == '\t' && line.charAt(1) != '\t') {
-						if (line.endsWith("{")) {
-							inBody = true;
-							inConstructor = line.contains("\t" + name + "(");
-							if (!inConstructor) {
-								for (String modif : Access.modifs) {
-									inConstructor = line.contains(modif + " " + name + "(");
-									if (inConstructor) break;
-								}
+				//TODO: fix error on empty lines
+				if (line.charAt(0) == '\t' && line.charAt(1) != '\t') {
+					if (line.endsWith("{")) {
+						inBody = true;
+						inConstructor = line.contains("\t" + name + "(");
+						if (!inConstructor) {
+							for (String modif : Access.modifs) {
+								inConstructor = line.contains(modif + " " + name + "(");
+								if (inConstructor) break;
 							}
-						} else if (line.endsWith("}")) {
-							inBody = false;
-							if (!inConstructor)
-								methods.add(new MethodNodeSource(body.toString() + "}"));
-							else
-								constructors.add(new ConstructorNodeSource(body.toString() + "}"));
-							body = new StringBuilder();
 						}
+					} else if (line.endsWith("}")) {
+						inBody = false;
+						if (!inConstructor)
+							methods.add(new MethodNodeSource(body.toString() + "}"));
+						else
+							constructors.add(new ConstructorNodeSource(body.toString() + "}"));
+						body = new StringBuilder();
 					}
-					if (!inBody && line.endsWith(";")) {
-						fields.add(new FieldNodeSource(line.replace("\t", "")));
-					} else if (inBody) {
-						while (line.startsWith("\t"))
-							line = line.substring(1);
-						body.append(line).append('\n');
-					}
+				}
+				if (!inBody && line.endsWith(";")) {
+					fields.add(new FieldNodeSource(line.replace("\t", "")));
+				} else if (inBody) {
+					while (line.startsWith("\t"))
+						line = line.substring(1);
+					body.append(line).append('\n');
 				}
 			}
 		}
