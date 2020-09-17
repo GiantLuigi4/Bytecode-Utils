@@ -59,7 +59,7 @@ public class Parser {
 					inClass = true;
 				}
 			} else {
-				if (line.charAt(0) == '\t' && line.charAt(1) != '\t') {
+				if (line.length() > 2 && line.charAt(0) == '\t' && line.charAt(1) != '\t') {
 					if (line.endsWith("{")) {
 						inBody = true;
 						inConstructor = line.contains("\t" + name + "(");
