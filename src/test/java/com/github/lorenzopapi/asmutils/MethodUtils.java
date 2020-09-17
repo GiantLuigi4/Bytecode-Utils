@@ -12,6 +12,7 @@ import static org.objectweb.asm.Opcodes.*;
 //I just need to be able to add instructions in the middle of the method
 //but I gtg now
 //I love this convos w/comments lmao
+//everything done I am so good lmao
 public class MethodUtils {
 
 	static ClassReader reader = null;
