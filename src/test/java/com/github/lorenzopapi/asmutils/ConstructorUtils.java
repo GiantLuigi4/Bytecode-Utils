@@ -31,13 +31,12 @@ public class ConstructorUtils {
 		insns1.add(new LdcInsnNode("THE WORLD"));
 		insns1.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V"));
 		InsnList insns2 = new InsnList();
-		insns1.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
-		insns1.add(new LdcInsnNode("THE WORLD"));
-		insns1.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V"));
+		insns2.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
+		insns2.add(new LdcInsnNode("THE"));
+		insns2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V"));
 		addInstructionsToStartOrEnd(insns, "", true);
 		addInstructionsToStartOrEnd(insns1, "", false);
-		InsnNode beforeNode = new InsnNode(RETURN); //new MethodInsnNode(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
-		byte[] bytes = addInstructionsAfterOrBeforeInsn(insns2, beforeNode, 1, 0, true);
+		byte[] bytes = addInstructionsAfterOrBeforeInsn("", insns2, INVOKEVIRTUAL, 1, 0, false);
 		FileOutputStream stream = new FileOutputStream("yes.class");
 		stream.write(bytes);
 		stream.close();
@@ -58,7 +57,7 @@ public class ConstructorUtils {
 			descriptor = "()V";
 		}
 		for (MethodNode method : node.methods)
-			if ((method.name.equals("<clinit>") || method.name.equals("<init>")) && method.desc.contains(descriptor)) {
+			if ((method.name.equals("<clinit>") || method.name.equals("<init>")) && method.desc.equals(descriptor)) {
 				List<Integer> opcodesList = new ArrayList<>();
 				method.instructions.forEach((absNode) -> opcodesList.add(absNode.getOpcode()));
 				for (AbstractInsnNode node : method.instructions) {
@@ -80,25 +79,28 @@ public class ConstructorUtils {
 		return result.toByteArray();
 	}
 
-	public static byte[] addInstructionsAfterOrBeforeInsn(InsnList listToAdd, AbstractInsnNode insn, int position, int varInsnValue, boolean before) { //I don't know if it works
+	public static byte[] addInstructionsAfterOrBeforeInsn(String descriptor, InsnList listToAdd, int opCodeToSearch, int position, int varInsnValue, boolean before) { //I don't know if it works
 		int insnCounter = 0;
-
+		if (descriptor.equals("")) {
+			descriptor = "()V";
+		}
 		for (MethodNode method : node.methods)
-			if ((method.name.equals("<clinit>") || method.name.equals("<init>")) && method.desc.contains(")V"))
-				for (AbstractInsnNode insnNode : method.instructions)
-					if (insnNode.getOpcode() == insn.getOpcode()) {
-						if (insn instanceof VarInsnNode) {
-							VarInsnNode varNode = (VarInsnNode) insn;
+			if ((method.name.equals("<clinit>") || method.name.equals("<init>")) && method.desc.contains(descriptor))
+				for (AbstractInsnNode actualInstruction : method.instructions)
+					if (actualInstruction.getOpcode() == opCodeToSearch) {
+						if ((opCodeToSearch >= 21 && opCodeToSearch <= 25) || (opCodeToSearch >= 54 && opCodeToSearch <= 58) || opCodeToSearch == 169) {
+							VarInsnNode varNode = (VarInsnNode) actualInstruction;
 							if (varNode.var == varInsnValue)
 								insnCounter++;
 						} else {
 							insnCounter++;
 						}
 						if (insnCounter == position) {
+							System.out.println("E");
 							if (before) {
-								method.instructions.insertBefore(insn, listToAdd);
+								method.instructions.insertBefore(actualInstruction, listToAdd);
 							} else {
-								method.instructions.insert(insn, listToAdd);
+								method.instructions.insert(actualInstruction, listToAdd);
 							}
 						}
 					}
