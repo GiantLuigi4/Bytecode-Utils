@@ -62,7 +62,7 @@ public class Parser {
 				//TODO: fix error on empty lines
 				try {
 					if (line.charAt(0) == '\t' && line.charAt(1) != '\t') {
-						if (line.endsWith("{")) {
+						if (!inBody && line.endsWith("{")) {
 							inBody = true;
 							inConstructor = line.contains("\t" + name + "(");
 							if (!inConstructor) {
