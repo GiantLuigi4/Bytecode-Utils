@@ -18,6 +18,7 @@ public class Formatter {
 					escaped = false;
 				} else if (c == '"') {
 					inString = !inString;
+					lineCommentRemover.append(c);
 				} else if (c == '\\') {
 					escaped = true;
 				} else {
@@ -66,7 +67,7 @@ public class Formatter {
 						if (src.charAt(i) == '{') {
 							brackets++;
 						}
-						for (int i1 = 0; i1 < brackets; i1++) {
+						for (int i1 = 0; i1 < Math.min(brackets, 3); i1++) {
 							builder.append("\t");
 						}
 					} else if (src.charAt(i) != '\n' && src.charAt(i) != '\t') {
@@ -74,7 +75,7 @@ public class Formatter {
 					}
 					if ((src.charAt(i) == '}')) {
 						builder.append('\n');
-						for (int i1 = 0; i1 < brackets; i1++) {
+						for (int i1 = 0; i1 < Math.min(brackets, 3); i1++) {
 							builder.append("\t");
 						}
 					}
