@@ -1,26 +1,36 @@
 package com.tfc.bytecode.asm.ASM;
 
-import com.tfc.bytecode.utils.Access;
 import org.objectweb.asm.ClassVisitor;
 
 public class FieldVisitor extends ClassVisitor {
 	public final String name;
 	public final int level;
+	public final Object value;
+	public final String desc;
 	
-	public FieldVisitor(int api, ClassVisitor classVisitor, int level, String name) {
-		super(api, classVisitor);
-		this.level = level;
+	public FieldVisitor(int api, String name, int level, Object value, String desc) {
+		super(api);
 		this.name = name;
+		this.level = level;
+		this.value = value;
+		this.desc = desc;
 	}
 	
-	public FieldVisitor(int api, ClassVisitor classVisitor, String level, String name) {
+	public FieldVisitor(int api, ClassVisitor classVisitor, String name, int level, Object value, String desc) {
 		super(api, classVisitor);
-		this.level = Access.parseAccess(level);
 		this.name = name;
+		this.level = level;
+		this.value = value;
+		this.desc = desc;
 	}
 	
 	@Override
 	public org.objectweb.asm.FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-		return super.visitField(level, name, descriptor, signature, value);
+		if (name.equals(this.name)) {
+			Object val = this.value != null ? this.value : value;
+			String desc = this.desc != null ? this.desc : descriptor;
+			return super.visitField(level, name, desc, signature, val);
+		}
+		return super.visitField(access, name, descriptor, signature, value);
 	}
 }

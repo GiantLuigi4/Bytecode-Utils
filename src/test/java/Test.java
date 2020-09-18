@@ -1,4 +1,5 @@
 import com.tfc.bytecode.Compiler;
+import com.tfc.bytecode.asm.ASM.ASM;
 import com.tfc.bytecode.compilers.ASM_Compiler;
 import com.tfc.bytecode.compilers.Janino_Compiler;
 import com.tfc.bytecode.loading.ForceLoad;
@@ -25,6 +26,7 @@ public class Test {
 		FileOutputStream writer4 = new FileOutputStream(System.getProperty("user.dir") + "\\test3.class");
 		FileOutputStream writer5 = new FileOutputStream(System.getProperty("user.dir") + "\\test4.class");
 		FileOutputStream writer6 = new FileOutputStream(System.getProperty("user.dir") + "\\test5.class");
+		FileOutputStream writer7 = new FileOutputStream(System.getProperty("user.dir") + "\\test6.class");
 		
 		ArrayList<FieldNode> nodesF = new ArrayList<>();
 		ArrayList<MethodNode> nodesM = new ArrayList<>();
@@ -84,12 +86,20 @@ public class Test {
 				"package test;" +
 				"" +
 				"public class hello {" +
+				"	private String hello1 = \"hi\";" +
+				"	" +
 				"	public static void test() {" +
 				"		System.out.println(\"hello\");" +
 				"	}" +
 				"}", "a"
 		);
 		writer6.write(bytes3);
+		ASM asm = new ASM(bytes3);
+		writer7.write(asm
+				.transformField("hello1", "public static")
+				.addField("hello2", "public", "Ljava/lang/String;", "h")
+				.toBytes()
+		);
 		
 		writer.close();
 		writer1.close();
@@ -98,6 +108,7 @@ public class Test {
 		writer4.close();
 		writer5.close();
 		writer6.close();
+		writer7.close();
 		
 		ForceLoad.forceLoad(Test.class.getClassLoader(), bytes);
 		Class.forName("hello").getMethod("hello1").invoke(null);
