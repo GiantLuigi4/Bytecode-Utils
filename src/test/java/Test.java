@@ -1,10 +1,12 @@
 import com.tfc.bytecode.Compiler;
 import com.tfc.bytecode.compilers.ASM_Compiler;
+import com.tfc.bytecode.compilers.Janino_Compiler;
 import com.tfc.bytecode.loading.ForceLoad;
 import com.tfc.bytecode.utils.class_structure.FieldNode;
 import com.tfc.bytecode.utils.class_structure.InsnNode;
 import com.tfc.bytecode.utils.class_structure.MethodNode;
 import com.tfc.bytecode.utils.class_structure.MethodNodeSource;
+import org.codehaus.commons.compiler.CompileException;
 import org.objectweb.asm.Opcodes;
 
 import java.io.FileOutputStream;
@@ -15,13 +17,14 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Test {
-	public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+	public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, CompileException {
 		FileOutputStream writer = new FileOutputStream(System.getProperty("user.dir") + "\\test.class");
 		FileOutputStream writer1 = new FileOutputStream(System.getProperty("user.dir") + "\\test.txt");
 		FileOutputStream writer2 = new FileOutputStream(System.getProperty("user.dir") + "\\test2.class");
 		FileOutputStream writer3 = new FileOutputStream(System.getProperty("user.dir") + "\\test2.txt");
 		FileOutputStream writer4 = new FileOutputStream(System.getProperty("user.dir") + "\\test3.class");
 		FileOutputStream writer5 = new FileOutputStream(System.getProperty("user.dir") + "\\test4.class");
+		FileOutputStream writer6 = new FileOutputStream(System.getProperty("user.dir") + "\\test5.class");
 		
 		ArrayList<FieldNode> nodesF = new ArrayList<>();
 		ArrayList<MethodNode> nodesM = new ArrayList<>();
@@ -77,12 +80,24 @@ public class Test {
 		writer4.write(bytes1);
 		writer5.write(bytes2);
 		
+		byte[] bytes3 = new Janino_Compiler().compile("" +
+				"package test;" +
+				"" +
+				"public class hello {" +
+				"	public static void test() {" +
+				"		System.out.println(\"hello\");" +
+				"	}" +
+				"}", "a"
+		);
+		writer6.write(bytes3);
+		
 		writer.close();
 		writer1.close();
 		writer2.close();
 		writer3.close();
 		writer4.close();
 		writer5.close();
+		writer6.close();
 		
 		ForceLoad.forceLoad(Test.class.getClassLoader(), bytes);
 		Class.forName("hello").getMethod("hello1").invoke(null);
