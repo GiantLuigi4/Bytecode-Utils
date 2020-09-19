@@ -157,6 +157,9 @@ public class MethodUtils {
 		switch (returnString) {
 			case "V":
 				return RETURN;
+			case "B":
+			case "S":
+			case "Z":
 			case "I":
 				return IRETURN;
 			case "F":
