@@ -84,6 +84,7 @@ public class Test {
 		
 		byte[] bytes3 = new Janino_Compiler().compile("" +
 				"package test;" +
+				"import hello.hello.hello;" +
 				"" +
 				"public class hello {" +
 				"	private String hello1 = \"hi\";" +

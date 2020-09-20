@@ -14,15 +14,23 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Janino_Compiler {
-	public byte[] compile(String source, String name) throws IOException, CompileException {
+	private final ICompiler compiler;
+	
+	public Janino_Compiler(ICompiler compiler) {
+		this.compiler = compiler;
+	}
+	
+	public Janino_Compiler() {
 		CompilerFactory compilerFactory = new CompilerFactory();
-		ICompiler compiler = compilerFactory.newCompiler();
-		compiler.setClassFileFinder(new ResourceFinder() {
+		this.compiler = compilerFactory.newCompiler();
+		
+		this.compiler.setClassFileFinder(new ResourceFinder() {
 			@Override
 			public Resource findResource(String resourceName) {
 				return new Resource() {
 					@Override
-					public InputStream open() throws IOException {
+					public InputStream open() {
+						System.out.println(resourceName);
 						return Janino_Compiler.class.getClassLoader().getResourceAsStream(resourceName);
 					}
 					
@@ -37,8 +45,10 @@ public class Janino_Compiler {
 					}
 				};
 			}
-		});
-		
+		}, true);
+	}
+	
+	public byte[] compile(String source, String name) throws IOException, CompileException {
 		HashMap<String, byte[]> classes = new HashMap<>();
 		compiler.setClassFileCreator(new MapResourceCreator(classes));
 		
@@ -62,5 +72,59 @@ public class Janino_Compiler {
 		});
 		
 		return (byte[]) classes.values().toArray()[0];
+	}
+	
+	public byte[] compile(String source, String name, String[] otherClasses) throws IOException, CompileException {
+		HashMap<String, byte[]> classes = new HashMap<>();
+		compiler.setClassFileCreator(new MapResourceCreator(classes));
+		
+		Resource[] resources = buildResources(
+				new Resource() {
+					@Override
+					public InputStream open() {
+						return new ByteArrayInputStream(source.getBytes());
+					}
+					
+					@Override
+					public String getFileName() {
+						return name;
+					}
+					
+					@Override
+					public long lastModified() {
+						return new Date().getTime();
+					}
+				},
+				otherClasses
+		);
+		
+		compiler.compile(resources);
+		
+		return (byte[]) classes.values().toArray()[0];
+	}
+	
+	private Resource[] buildResources(Resource resource, String[] otherClasses) {
+		Resource[] resources = new Resource[otherClasses.length + 1];
+		resources[0] = resource;
+		for (int i = 0; i < otherClasses.length; i++) {
+			int finalI = i;
+			resources[i + 1] = new Resource() {
+				@Override
+				public InputStream open() throws IOException {
+					return Janino_Compiler.class.getClassLoader().getResourceAsStream(otherClasses[finalI]);
+				}
+				
+				@Override
+				public String getFileName() {
+					return otherClasses[finalI];
+				}
+				
+				@Override
+				public long lastModified() {
+					return new Date().getTime();
+				}
+			};
+		}
+		return resources;
 	}
 }
