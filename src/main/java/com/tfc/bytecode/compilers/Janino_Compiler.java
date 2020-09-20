@@ -24,14 +24,13 @@ public class Janino_Compiler {
 		CompilerFactory compilerFactory = new CompilerFactory();
 		this.compiler = compilerFactory.newCompiler();
 		
-		this.compiler.setClassFileFinder(new ResourceFinder() {
+		ResourceFinder finder = new ResourceFinder() {
 			@Override
 			public Resource findResource(String resourceName) {
 				return new Resource() {
 					@Override
 					public InputStream open() {
-						System.out.println(resourceName);
-						return Janino_Compiler.class.getClassLoader().getResourceAsStream(resourceName);
+						return new ByteArrayInputStream(new byte[0]);
 					}
 					
 					@Override
@@ -45,7 +44,8 @@ public class Janino_Compiler {
 					}
 				};
 			}
-		}, true);
+		};
+		this.compiler.setSourceFinder(finder);
 	}
 	
 	public byte[] compile(String source, String name) throws IOException, CompileException {
