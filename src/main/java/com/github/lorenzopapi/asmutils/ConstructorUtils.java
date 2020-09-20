@@ -128,7 +128,6 @@ public class ConstructorUtils {
 							insnCounter++;
 						}
 						if (insnCounter == position) {
-							System.out.println("E");
 							if (before) {
 								method.instructions.insertBefore(actualInstruction, listToAdd);
 							} else {
