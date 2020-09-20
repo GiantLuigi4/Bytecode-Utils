@@ -110,7 +110,7 @@ public class Janino_Compiler {
 			int finalI = i;
 			resources[i + 1] = new Resource() {
 				@Override
-				public InputStream open() throws IOException {
+				public InputStream open() {
 					return Janino_Compiler.class.getClassLoader().getResourceAsStream(otherClasses[finalI]);
 				}
 				

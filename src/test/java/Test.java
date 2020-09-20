@@ -85,11 +85,13 @@ public class Test {
 		byte[] bytes3 = new Janino_Compiler().compile("" +
 				"package test;" +
 				"import hello.hello.helloa;" +
+				"import hello.hello.hellob;" +
 				"" +
 				"public class hello {" +
 				"	private String hello1 = \"hi\";" +
 				"	" +
 				"	private static helloa test;" +
+				"	private static hellob test;" +
 				"	" +
 				"	public static void test() {" +
 				"		System.out.println(\"hello\");" +
