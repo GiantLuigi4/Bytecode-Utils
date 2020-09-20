@@ -9,6 +9,10 @@ import com.tfc.bytecode.utils.class_structure.MethodNode;
 import com.tfc.bytecode.utils.class_structure.MethodNodeSource;
 import org.codehaus.commons.compiler.CompileException;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +20,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+
+import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 
 public class Test {
 	public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, CompileException {
@@ -85,17 +92,17 @@ public class Test {
 		byte[] bytes3 = new Janino_Compiler().compile("" +
 				"package test;" +
 				"import hello.hello.helloa;" +
-				"import hello.hello.hellob;" +
 				"" +
 				"public class hello {" +
 				"	private String hello1 = \"hi\";" +
 				"	" +
 				"	private static helloa test;" +
-				"	private static hellob test;" +
 				"	" +
-				"	public static void test() {" +
+				"	private static void test() {" +
 				"		System.out.println(\"hello\");" +
 				"	}" +
+				"	" +
+				"	private hello(){}" +
 				"}", "a"
 		);
 		writer6.write(bytes3);
@@ -103,6 +110,11 @@ public class Test {
 		writer7.write(asm
 				.transformField("hello1", "public static")
 				.addField("hello2", "public", "Ljava/lang/String;", "h")
+				.addMethod("public static", "testMethodAdd", "()V", null, null, generatePrintList("Hello"))
+				.transformMethod("test", "()V", "public static")
+				.transformMethod("test", "()V", generatePrintList("Added At Top"), true)
+				.transformMethod("test", "()V", generatePrintList("Added At Bottom"), false)
+				.transformConstructor("()V", "public")
 				.toBytes()
 		);
 		
@@ -117,5 +129,13 @@ public class Test {
 		
 		ForceLoad.forceLoad(Test.class.getClassLoader(), bytes);
 		Class.forName("hello").getMethod("hello1").invoke(null);
+	}
+	
+	private static InsnList generatePrintList(String text) {
+		InsnList insns = new InsnList();
+		insns.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
+		insns.add(new LdcInsnNode(text));
+		insns.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V"));
+		return insns;
 	}
 }

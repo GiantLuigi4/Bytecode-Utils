@@ -59,4 +59,9 @@ public class MethodNode {
 	public void addInstruction(InsnNode node) {
 		instructions.add(node);
 	}
+	
+	//TODO
+	public Object toInsnList() {
+		return null;
+	}
 }

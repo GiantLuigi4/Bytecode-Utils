@@ -1,9 +1,12 @@
 package com.tfc.bytecode.asm.ASM;
 
+import com.github.lorenzopapi.asmutils.ConstructorUtils;
+import com.github.lorenzopapi.asmutils.MethodUtils;
 import com.tfc.bytecode.utils.Access;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.InsnList;
 
 public class ASM {
 	private byte[] thisClass;
@@ -30,6 +33,36 @@ public class ASM {
 		reader.accept(visitor, ClassWriter.COMPUTE_FRAMES);
 		writer.visitEnd();
 		thisClass = writer.toByteArray();
+		return this;
+	}
+	
+	public ASM transformMethod(String name, String descriptor, String newAccess) {
+		MethodUtils utils = new MethodUtils(thisClass);
+		thisClass = utils.changeMethodAccess(Access.parseAccess(newAccess), name, descriptor);
+		return this;
+	}
+	
+	public ASM transformMethod(String name, String descriptor, InsnList list, boolean atStart) {
+		MethodUtils utils = new MethodUtils(thisClass);
+		thisClass = utils.addInstructionsToStartOrEnd(name, descriptor, list, atStart);
+		return this;
+	}
+	
+	public ASM transformMethod(String name, String descriptor, InsnList list, int search, int pos, int insnVal, boolean before) {
+		MethodUtils utils = new MethodUtils(thisClass);
+		thisClass = utils.addInstructionsAfterOrBeforeInsn(name, descriptor, list, search, pos, insnVal, before);
+		return this;
+	}
+	
+	public ASM addMethod(String access, String name, String descriptor, String signature, String[] exceptions, InsnList method) {
+		MethodUtils utils = new MethodUtils(thisClass);
+		thisClass = utils.addMethodToClass(Access.parseAccess(access), name, descriptor, signature, exceptions, method);
+		return this;
+	}
+	
+	public ASM transformConstructor(String descriptor, String newAccess) {
+		ConstructorUtils utils = new ConstructorUtils(thisClass);
+		thisClass = utils.changeAccess(Access.parseAccess(newAccess), descriptor);
 		return this;
 	}
 	
