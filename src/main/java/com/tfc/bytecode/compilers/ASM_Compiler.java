@@ -29,7 +29,7 @@ public class ASM_Compiler {
 		for (MethodNode node : nodesM) {
 			MethodVisitor visitor = writer.visitMethod(node.access, node.name, node.desc, node.signature, node.exceptions);
 			visitor.visitCode();
-			for (InsnNode node1 : node.instructions) {
+			for (GenericInsnNode node1 : node.instructions) {
 				switch (node1.type) {
 					case INSN:
 						visitor.visitInsn((int) node1.args[0]);

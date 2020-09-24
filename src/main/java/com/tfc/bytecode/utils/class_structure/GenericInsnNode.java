@@ -1,15 +1,15 @@
 package com.tfc.bytecode.utils.class_structure;
 
-public class InsnNode {
+public class GenericInsnNode {
 	public final InsnType type;
 	public final Object[] args;
 	
-	public InsnNode(String type, Object[] args) {
+	public GenericInsnNode(String type, Object[] args) {
 		this.type = InsnType.get(type);
 		this.args = args;
 	}
 	
-	public InsnNode(InsnType type, Object[] args) {
+	public GenericInsnNode(InsnType type, Object[] args) {
 		this.type = type;
 		this.args = args;
 	}

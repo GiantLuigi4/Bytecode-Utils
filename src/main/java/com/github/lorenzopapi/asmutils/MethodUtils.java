@@ -103,10 +103,20 @@ public class MethodUtils {
 	 * @return a byte array, the new transformed class (useful to write the class into a file)
 	 */
 
-	public byte[] addMethodToClass(int access, String name, String descriptor, String signature, String[] ex, InsnList instructions) {
+	public byte[] addMethodToClass(int access, String name, String descriptor, String signature, String[] ex, InsnList instructions, boolean replace) {
 		MethodNode method = new MethodNode(access, name, descriptor, signature, ex);
-		method.instructions = instructions;
-		node.methods.add(method);
+		if (!replace) {
+			method.instructions = instructions;
+			node.methods.add(method);
+		} else {
+			for (MethodNode classMethod : node.methods) {
+				if (classMethod.name.equals(method.name) && classMethod.access == method.access && method.desc.equals(classMethod.desc)) {
+					classMethod.instructions.clear();
+					classMethod.instructions = instructions;
+					break;
+				}
+			}
+		}
 		ClassWriter result = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		node.accept(result);
 		return result.toByteArray();

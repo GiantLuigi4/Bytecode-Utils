@@ -20,7 +20,7 @@ public class MethodNode {
 	public String desc;
 	public final int access;
 	public final String name;
-	public ArrayList<InsnNode> instructions = new ArrayList<>();
+	public ArrayList<GenericInsnNode> instructions = new ArrayList<>();
 	public final String signature;
 	public final String[] exceptions;
 	
@@ -33,12 +33,12 @@ public class MethodNode {
 		this.exceptions = null;
 		for (String line : source.code.substring(source.code.indexOf("{") + 1).split(";")) {
 			if (line.trim().startsWith("return") && line.contains("+")) {
-				addInstruction(new InsnNode("VarInsn", new Object[]{Opcodes.ILOAD, 1}));
-				addInstruction(new InsnNode("VarInsn", new Object[]{Opcodes.ILOAD, 2}));
-				addInstruction(new InsnNode("Insn", new Object[]{Opcodes.IADD}));
-				addInstruction(new InsnNode("Insn", new Object[]{Opcodes.IRETURN}));
+				addInstruction(new GenericInsnNode("VarInsn", new Object[]{Opcodes.ILOAD, 1}));
+				addInstruction(new GenericInsnNode("VarInsn", new Object[]{Opcodes.ILOAD, 2}));
+				addInstruction(new GenericInsnNode("Insn", new Object[]{Opcodes.IADD}));
+				addInstruction(new GenericInsnNode("Insn", new Object[]{Opcodes.IRETURN}));
 			} else if (line.trim().startsWith("return")) {
-				addInstruction(new InsnNode(InsnNode.InsnType.INSN, new Object[]{Opcodes.IRETURN}));
+				addInstruction(new GenericInsnNode(GenericInsnNode.InsnType.INSN, new Object[]{Opcodes.IRETURN}));
 			}
 		}
 	}
@@ -56,7 +56,7 @@ public class MethodNode {
 		return argsBuilder.toString() + desc;
 	}
 	
-	public void addInstruction(InsnNode node) {
+	public void addInstruction(GenericInsnNode node) {
 		instructions.add(node);
 	}
 	

@@ -54,9 +54,9 @@ public class ASM {
 		return this;
 	}
 	
-	public ASM addMethod(String access, String name, String descriptor, String signature, String[] exceptions, InsnList method) {
+	public ASM addMethod(String access, String name, String descriptor, String signature, String[] exceptions, InsnList method, boolean replace) {
 		MethodUtils utils = new MethodUtils(thisClass);
-		thisClass = utils.addMethodToClass(Access.parseAccess(access), name, descriptor, signature, exceptions, method);
+		thisClass = utils.addMethodToClass(Access.parseAccess(access), name, descriptor, signature, exceptions, method, replace);
 		return this;
 	}
 	

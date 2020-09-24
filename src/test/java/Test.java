@@ -4,15 +4,12 @@ import com.tfc.bytecode.compilers.ASM_Compiler;
 import com.tfc.bytecode.compilers.Janino_Compiler;
 import com.tfc.bytecode.loading.ForceLoad;
 import com.tfc.bytecode.utils.class_structure.FieldNode;
-import com.tfc.bytecode.utils.class_structure.InsnNode;
+import com.tfc.bytecode.utils.class_structure.GenericInsnNode;
 import com.tfc.bytecode.utils.class_structure.MethodNode;
 import com.tfc.bytecode.utils.class_structure.MethodNodeSource;
 import org.codehaus.commons.compiler.CompileException;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.*;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,11 +18,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static org.objectweb.asm.Opcodes.GETSTATIC;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+import static org.objectweb.asm.Opcodes.*;
 
 public class Test {
-	public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, CompileException {
+	public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, CompileException {
 		FileOutputStream writer = new FileOutputStream(System.getProperty("user.dir") + "\\test.class");
 		FileOutputStream writer1 = new FileOutputStream(System.getProperty("user.dir") + "\\test.txt");
 		FileOutputStream writer2 = new FileOutputStream(System.getProperty("user.dir") + "\\test2.class");
@@ -34,7 +30,10 @@ public class Test {
 		FileOutputStream writer5 = new FileOutputStream(System.getProperty("user.dir") + "\\test4.class");
 		FileOutputStream writer6 = new FileOutputStream(System.getProperty("user.dir") + "\\test5.class");
 		FileOutputStream writer7 = new FileOutputStream(System.getProperty("user.dir") + "\\test6.class");
-		
+
+		InsnList list = new InsnList();
+		list.add(new InsnNode(ICONST_0));
+		list.add(new InsnNode(IRETURN));
 		ArrayList<FieldNode> nodesF = new ArrayList<>();
 		ArrayList<MethodNode> nodesM = new ArrayList<>();
 		nodesF.add(new FieldNode(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "hello", "int", null, 32));
@@ -51,9 +50,9 @@ public class Test {
 		));
 		
 		MethodNode con = new MethodNode(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null);
-		con.addInstruction(new InsnNode(InsnNode.InsnType.VAR_INSN, new Object[]{Opcodes.ALOAD, 0}));
-		con.addInstruction(new InsnNode(InsnNode.InsnType.METHOD_INSN, new Object[]{Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false}));
-		con.addInstruction(new InsnNode(InsnNode.InsnType.INSN, new Object[]{Opcodes.RETURN}));
+		con.addInstruction(new GenericInsnNode(GenericInsnNode.InsnType.VAR_INSN, new Object[]{Opcodes.ALOAD, 0}));
+		con.addInstruction(new GenericInsnNode(GenericInsnNode.InsnType.METHOD_INSN, new Object[]{Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false}));
+		con.addInstruction(new GenericInsnNode(GenericInsnNode.InsnType.INSN, new Object[]{Opcodes.RETURN}));
 		
 		nodesM.add(node);
 		nodesM.add(node1);
@@ -110,7 +109,8 @@ public class Test {
 		writer7.write(asm
 				.transformField("hello1", "public static")
 				.addField("hello2", "public", "Ljava/lang/String;", "h")
-				.addMethod("public static", "testMethodAdd", "()V", null, null, generatePrintList("Hello"))
+				.addMethod("public static", "testMethodAdd", "()V", null, null, generatePrintList("Hello"), false)
+				.addMethod("public", "hello", "()I", null, null, list, false)
 				.transformMethod("test", "()V", "public static")
 				.transformMethod("test", "()V", generatePrintList("Added At Top"), true)
 				.transformMethod("test", "()V", generatePrintList("Added At Bottom"), false)
