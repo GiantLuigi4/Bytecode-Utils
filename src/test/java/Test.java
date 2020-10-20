@@ -108,7 +108,7 @@ public class Test {
 		ASM asm = new ASM(bytes3);
 		writer7.write(asm
 				.transformField("hello1", "public static")
-				.addField("hello2", "public", "Ljava/lang/String;", "h")
+				.addField("hello2", "public", "Ljava/lang/String;", "\"h\"")
 				.addMethod("public static", "testMethodAdd", "()V", null, null, generatePrintList("Hello"), false)
 				.addMethod("public", "hello", "()I", null, null, list, false)
 				.transformMethod("test", "()V", "public static")

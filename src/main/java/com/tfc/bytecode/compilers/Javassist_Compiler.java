@@ -73,10 +73,36 @@ public class Javassist_Compiler {
 				assert ctClass != null;
 				cc.addField(new CtField(ctClass, node.getName(), cc));
 			}
-		for (MethodNodeSource node : classNode.methods)
-			cc.addMethod(CtNewMethod.make(node.code, cc));
-		for (ConstructorNodeSource node : classNode.constructors)
-			cc.addConstructor(CtNewConstructor.make(node.code, cc));
+		ArrayList<ConstructorNodeSource> failed_constructors = new ArrayList<>();
+		for (ConstructorNodeSource node : classNode.constructors) {
+			try {
+				cc.addConstructor(CtNewConstructor.make(node.code, cc));
+			} catch (Throwable ignored) {
+				failed_constructors.add(node);
+			}
+		}
+		ArrayList<MethodNodeSource> failed_methods = new ArrayList<>();
+		for (MethodNodeSource node : classNode.methods) {
+			try {
+				cc.addMethod(CtNewMethod.make(node.code, cc));
+			} catch (Throwable ignored) {
+				failed_methods.add(node);
+			}
+		}
+		for (ConstructorNodeSource node : failed_constructors) {
+			try {
+				cc.addConstructor(CtNewConstructor.make(node.code, cc));
+			} catch (Throwable ignored) {
+				failed_constructors.add(node);
+			}
+		}
+		for (MethodNodeSource node : failed_methods) {
+			try {
+				cc.addMethod(CtNewMethod.make(node.code, cc));
+			} catch (Throwable ignored) {
+				failed_methods.add(node);
+			}
+		}
 		return cc.toBytecode();
 	}
 	
