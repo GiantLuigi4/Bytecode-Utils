@@ -30,7 +30,7 @@ public class Janino_Compiler {
 				return new Resource() {
 					@Override
 					public InputStream open() {
-						return new ByteArrayInputStream(new byte[0]);
+						return Janino_Compiler.class.getClassLoader().getResourceAsStream(resourceName);
 					}
 					
 					@Override
