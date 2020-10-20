@@ -93,14 +93,12 @@ public class Javassist_Compiler {
 			try {
 				cc.addConstructor(CtNewConstructor.make(node.code, cc));
 			} catch (Throwable ignored) {
-				failed_constructors.add(node);
 			}
 		}
 		for (MethodNodeSource node : failed_methods) {
 			try {
 				cc.addMethod(CtNewMethod.make(node.code, cc));
 			} catch (Throwable ignored) {
-				failed_methods.add(node);
 			}
 		}
 		return cc.toBytecode();
