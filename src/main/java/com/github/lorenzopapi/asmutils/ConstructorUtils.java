@@ -57,7 +57,7 @@ public class ConstructorUtils {
 			descriptor = "()V";
 		}
 		for (MethodNode method : node.methods)
-			if ((method.name.equals("<clinit>") || method.name.equals("<init>")) && method.desc.contains(descriptor))
+			if (method.name.equals("<init>") && method.desc.contains(descriptor))
 				method.access = newAccess;
 
 		ClassWriter result = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
@@ -73,12 +73,13 @@ public class ConstructorUtils {
 	 * @return a byte array, the new transformed class (useful to write the class into a file)
 	 */
 
-	public byte[] addInstructionsToStartOrEnd(InsnList list, String descriptor, boolean atStart) {
+	public byte[] addInstructionsToStartOrEnd(InsnList list, String descriptor, boolean atStart, boolean isStatic) {
+		String constructorName = isStatic ? "<clinit>" : "<init>";
 		if (descriptor.equals("")) {
 			descriptor = "()V";
 		}
 		for (MethodNode method : node.methods)
-			if ((method.name.equals("<clinit>") || method.name.equals("<init>")) && method.desc.equals(descriptor)) {
+			if (method.name.equals(constructorName) && method.desc.equals(descriptor)) {
 				List<Integer> opcodesList = new ArrayList<>();
 				method.instructions.forEach((absNode) -> opcodesList.add(absNode.getOpcode()));
 				for (AbstractInsnNode node : method.instructions) {
@@ -111,13 +112,14 @@ public class ConstructorUtils {
 	 * @return a byte array, the new transformed class (useful to write the class into a file)
 	 */
 
-	public byte[] addInstructionsAfterOrBeforeInsn(String descriptor, InsnList listToAdd, int opCodeToSearch, int position, int varInsnValue, boolean before) { //I don't know if it works
+	public byte[] addInstructionsAfterOrBeforeInsn(String descriptor, InsnList listToAdd, int opCodeToSearch, int position, int varInsnValue, boolean before, boolean isStatic) {
+		String constructorName = isStatic ? "<clinit>" : "<init>";
 		int insnCounter = 0;
 		if (descriptor.equals("")) {
 			descriptor = "()V";
 		}
 		for (MethodNode method : node.methods)
-			if ((method.name.equals("<clinit>") || method.name.equals("<init>")) && method.desc.contains(descriptor))
+			if (method.name.equals(constructorName) && method.desc.contains(descriptor))
 				for (AbstractInsnNode actualInstruction : method.instructions)
 					if (actualInstruction.getOpcode() == opCodeToSearch) {
 						if ((opCodeToSearch >= 21 && opCodeToSearch <= 25) || (opCodeToSearch >= 54 && opCodeToSearch <= 58) || opCodeToSearch == 169) {
