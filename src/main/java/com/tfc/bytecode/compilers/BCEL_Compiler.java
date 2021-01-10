@@ -18,6 +18,7 @@ public class BCEL_Compiler {
 //		);
 //		MethodGen gen1 = new MethodGen(Modifier.PUBLIC, Type.getReturnType("java.lang.Object"),);
 //		gen.addMethod();
-		return null;
+//		return null;
+		throw new RuntimeException(new IllegalAccessException("NYI"));
 	}
 }

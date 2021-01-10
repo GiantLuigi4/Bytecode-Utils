@@ -50,7 +50,8 @@ public class ASM_Compiler {
 			}
 			visitor.visitMaxs(node.maxStack, node.maxLocals);
 		}
-		return writer.toByteArray();
+		throw new RuntimeException(new IllegalAccessException("NYI"));
+//		return writer.toByteArray();
 	}
 	
 	public byte[] compile(ClassNode node) {
