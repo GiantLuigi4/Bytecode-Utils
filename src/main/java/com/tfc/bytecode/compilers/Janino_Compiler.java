@@ -20,38 +20,11 @@ public class Janino_Compiler {
 		this.compiler = compiler;
 	}
 	
+	public ClassLoader classLoaderReference = Janino_Compiler.class.getClassLoader();
+	
 	public Janino_Compiler() {
 		CompilerFactory compilerFactory = new CompilerFactory();
 		this.compiler = compilerFactory.newCompiler();
-		
-//		ResourceFinder finder = new ResourceFinder() {
-//			@Override
-//			public Resource findResource(String resourceName) {
-//				return new Resource() {
-//					@Override
-//					public InputStream open() {
-//						return Janino_Compiler.class.getClassLoader().getResourceAsStream(resourceName);
-//					}
-//
-//					@Override
-//					public String getFileName() {
-//						return resourceName;
-//					}
-//
-//					@Override
-//					public long lastModified() {
-//						return new Date().getTime();
-//					}
-//				};
-//			}
-//		};
-//		this.compiler.setClassFileFinder(finder);
-	
-	}
-	
-	public byte[] compile(String source, String name) throws IOException, CompileException {
-		HashMap<String, byte[]> classes = new HashMap<>();
-		compiler.setClassFileCreator(new MapResourceCreator(classes));
 		
 		ResourceFinder finder = new ResourceFinder() {
 			@Override
@@ -59,31 +32,27 @@ public class Janino_Compiler {
 				return new Resource() {
 					@Override
 					public InputStream open() {
-						if (resourceName.equals(name)) {
-							return null;
-						}
-						return Janino_Compiler.class.getClassLoader().getResourceAsStream(resourceName);
+						return classLoaderReference.getResourceAsStream(resourceName);
 					}
 					
 					@Override
 					public String getFileName() {
-						if (resourceName.equals(name)) {
-							return null;
-						}
 						return resourceName;
 					}
 					
 					@Override
 					public long lastModified() {
-						if (resourceName.equals(name)) {
-							return 0;
-						}
 						return new Date().getTime();
 					}
 				};
 			}
 		};
 		this.compiler.setClassFileFinder(finder);
+	}
+	
+	public byte[] compile(String source, String name) throws IOException, CompileException {
+		HashMap<String, byte[]> classes = new HashMap<>();
+		compiler.setClassFileCreator(new MapResourceCreator(classes));
 		
 		compiler.compile(new Resource[]{
 				new Resource() {

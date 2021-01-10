@@ -13,16 +13,18 @@ import java.util.ArrayList;
 public class Javassist_Compiler {
 	private final ClassPool pool = ClassPool.getDefault();
 	
+	public ClassLoader classLoaderReference = Javassist_Compiler.class.getClassLoader();
+	
 	public Javassist_Compiler() {
 		this.addClassPath(new ClassPath() {
 			@Override
 			public InputStream openClassfile(String classname) {
-				return Javassist_Compiler.class.getClassLoader().getResourceAsStream(classname.replace(".", "/") + ".class");
+				return classLoaderReference.getResourceAsStream(classname.replace(".", "/") + ".class");
 			}
 			
 			@Override
 			public URL find(String classname) {
-				return Javassist_Compiler.class.getClassLoader().getResource(classname.replace(".", "/") + ".class");
+				return classLoaderReference.getResource(classname.replace(".", "/") + ".class");
 			}
 		});
 	}
