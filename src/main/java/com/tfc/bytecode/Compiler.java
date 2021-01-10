@@ -126,7 +126,7 @@ public class Compiler {
 		return null;
 	}
 	
-	public void setReferenceLoader(ClassLoader loader) {
+	public static void setReferenceLoader(ClassLoader loader) {
 		javassist.classLoaderReference = loader;
 		janino.classLoaderReference = loader;
 	}
